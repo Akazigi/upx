@@ -185,7 +185,7 @@ endif
 # check git submodules
 #***********************************************************************
 
-SUBMODULES = doctest lzma-sdk ucl valgrind zlib
+SUBMODULES = bzip2 doctest lzma-sdk ucl valgrind zlib zstd
 
 dummy := $(foreach m,$(SUBMODULES),$(if $(wildcard vendor/$m/[CL]*),$m,\
     $(error ERROR: missing git submodule '$m'; run 'git submodule update --init')))
