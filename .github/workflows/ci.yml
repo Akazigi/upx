@@ -304,8 +304,8 @@ jobs:
           git rev-parse --short=12 HEAD > %BDIR%\upx\.GITREV.txt
           @REM ===== build bzip2 =====
           cd %BDIR%\bzip2
-          @rem %RUN_CL% -J -O2 -W4 -wd4127 -wd4244 -wd4267 -WX %DEFS% -c %H%\vendor\bzip2\*.c
-          @rem %RUN_LIB% -out:bzip2.lib *.obj
+          %RUN_CL% -J -O2 -W4 -wd4127 -wd4244 -wd4267 -WX %DEFS% -c %H%\vendor\bzip2\*.c
+          %RUN_LIB% -out:bzip2.lib *.obj
           @REM ===== build UCL =====
           cd %BDIR%\ucl
           set s=%H%\vendor\ucl
@@ -318,16 +318,16 @@ jobs:
           @REM ===== build zstd =====
           cd %BDIR%\zstd
           set s=%H%\vendor\zstd\lib
-          @rem %RUN_CL% -J -O2 -W4 -WX -DDYNAMIC_BMI2=0 -DZSTD_DISABLE_ASM %DEFS% -c %s%\common\*.c %s%\compress\*.c %s%\decompress\*.c
-          @rem %RUN_LIB% -out:zstd.lib *.obj
+          %RUN_CL% -J -O2 -W4 -WX -DDYNAMIC_BMI2=0 -DZSTD_DISABLE_ASM %DEFS% -c %s%\common\*.c %s%\compress\*.c %s%\decompress\*.c
+          %RUN_LIB% -out:zstd.lib *.obj
           @REM ===== build UPX =====
           cd %BDIR%\upx
           set s=%H%\src
           cat .GITREV.txt
           set /p GITREV=<.GITREV.txt
-          set UPX_DEFS=-DUPX_CONFIG_DISABLE_WSTRICT=0 -DUPX_CONFIG_DISABLE_WERROR=0 -DWITH_BZIP2=0 -DWITH_ZSTD=0
+          set UPX_DEFS=-DUPX_CONFIG_DISABLE_WSTRICT=0 -DUPX_CONFIG_DISABLE_WERROR=0 -DWITH_BZIP2=0 -DWITH_ZSTD=1
           set UPX_LIBS=%BDIR%\bzip2\bzip2.lib %BDIR%\ucl\ucl.lib %BDIR%\zlib\zlib.lib %BDIR%\zstd\zstd.lib
-          set UPX_LIBS=%BDIR%\ucl\ucl.lib %BDIR%\zlib\zlib.lib
+          @rem set UPX_LIBS=%BDIR%\ucl\ucl.lib %BDIR%\zlib\zlib.lib
           set sources=%s%\*.cpp %s%\check\*.cpp %s%\compress\*.cpp %s%\console\*.cpp %s%\filter\*.cpp %s%\util\*.cpp
           %RUN_CL% -J -O2 -W4 -WX -std:c++17 -Zc:__cplusplus -EHsc -DUPX_VERSION_GITREV="""%GITREV%""" %UPX_DEFS% %DEFS% -I%H%\vendor -Feupx.exe %sources% %UPX_LIBS% /link ${{ matrix.link_machine_flags }} setargv.obj
       - name: 'Make artifact'
